@@ -59,6 +59,7 @@
   </div>
 </div>
 
+<script src="config.js"></script>
 <script>
 let DATA = [];
 
@@ -109,9 +110,10 @@ function renderGroup(key) {
   document.getElementById('reviewCard').classList.add('hidden');
 }
 
-// ⚠️ CP3: cắm API key vào đây (KHÔNG commit key thật lên repo — dùng biến môi trường/prompt nhập tay khi demo)
-const GEMINI_API_KEY = ""; // để trống -> UI sẽ nhắc nhập
-const GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+// Key được nạp từ config.js (sinh ra bởi generate_config.py đọc .env) — KHÔNG hardcode ở đây
+const OPENROUTER_API_KEY = window.OPENROUTER_API_KEY || "";
+const OPENROUTER_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
+const OPENROUTER_MODEL = "openai/gpt-4o";
 
 // Mapping day_code -> mã prefix transcript tương ứng (đã xác nhận qua nội dung khớp)
 const DAY_CODE_TO_TRANSCRIPT_PREFIX = {
@@ -153,8 +155,8 @@ async function generateReview(key) {
     return;
   }
 
-  if (!GEMINI_API_KEY) {
-    const key2 = prompt('Nhập Gemini API key (free tier, không lưu lại, chỉ dùng cho phiên demo này):');
+  if (!OPENROUTER_API_KEY) {
+    const key2 = prompt('Nhập OpenRouter API key (không lưu lại, chỉ dùng cho phiên demo này):');
     if (!key2) {
       reviewBox.textContent = 'Cần API key để gọi AI thật. Chưa nhập key nên không thể sinh bản ôn tập.';
       return;
@@ -162,7 +164,7 @@ async function generateReview(key) {
     window.__RUNTIME_KEY = key2;
   }
 
-  reviewBox.textContent = '⏳ Đang gọi AI thật, đối chiếu transcript...';
+  reviewBox.textContent = '⏳ Đang gọi AI thật (gpt-4o qua OpenRouter), đối chiếu transcript...';
 
   const relevantPrefixes = DAY_CODE_TO_TRANSCRIPT_PREFIX[dc] || [];
   const contextChunks = Object.entries(TRANSCRIPT_CHUNKS)
@@ -176,8 +178,11 @@ async function generateReview(key) {
 1. CHỈ dùng nội dung trong phần TRANSCRIPT được cung cấp bên dưới — không dùng kiến thức ngoài.
 2. Nếu không tìm thấy đoạn transcript support cho một câu hỏi, PHẢI nói rõ "không tìm thấy căn cứ trong tài liệu" cho câu đó — không được bịa.
 3. Mọi thông tin đưa ra phải kèm mã đoạn trích dẫn dạng [Txx-NNN] lấy từ transcript.
-4. KHÔNG chấm điểm, đánh giá năng lực học viên. KHÔNG sửa nội dung transcript gốc, chỉ tóm tắt/trích dẫn.
-5. Nếu TRANSCRIPT rỗng hoặc không đủ, báo rõ giới hạn này thay vì tự sinh nội dung.
+4. KHÔNG chấm điểm, đánh giá năng lực học viên dưới bất kỳ hình thức nào (kể cả cho điểm số, nhận xét đúng/sai bài làm).
+5. KHÔNG được viết lại, tóm tắt lại, hay tái cấu trúc toàn bộ nội dung bài giảng thành một phiên bản mới thay thế — kể cả khi học viên yêu cầu trực tiếp "viết lại cho dễ hiểu hơn". Nếu học viên yêu cầu việc này, PHẢI từ chối và giải thích: chỉ có thể trả lời câu hỏi cụ thể có trích dẫn, không tạo bản thay thế cho bài giảng gốc.
+6. KHÔNG cung cấp thông tin cá nhân/liên hệ của học viên khác.
+7. Nếu TRANSCRIPT rỗng hoặc không đủ, báo rõ giới hạn này thay vì tự sinh nội dung.
+8. Khi trình bày dưới dạng danh sách/định nghĩa có cấu trúc rõ ràng (ví dụ đánh số "4 câu hỏi trọng tâm", định nghĩa chính thức của một thuật ngữ), CHỈ dùng cấu trúc đó nếu transcript có sẵn cấu trúc tương tự. Nếu bạn đang tự tổng hợp/diễn giải từ nhiều câu rời rạc thành một cấu trúc mới, PHẢI ghi rõ "(tổng hợp/diễn giải, không phải nguyên văn)" ngay sau phần đó.
 
 TRANSCRIPT:
 ${contextChunks || '(không có transcript — báo rõ giới hạn này)'}
@@ -188,16 +193,22 @@ ${questionsList}
 Hãy sinh bản ôn tập ngắn gọn, mỗi điểm kèm mã đoạn trích dẫn thật.`;
 
   try {
-    const apiKey = GEMINI_API_KEY || window.__RUNTIME_KEY;
-    const res = await fetch(`${GEMINI_ENDPOINT}?key=${apiKey}`, {
+    const apiKey = OPENROUTER_API_KEY || window.__RUNTIME_KEY;
+    const res = await fetch(OPENROUTER_ENDPOINT, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+        'HTTP-Referer': window.location.href,
+        'X-Title': 'VLearn On tap ca nhan hoa'
+      },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: systemInstruction }] }]
+        model: OPENROUTER_MODEL,
+        messages: [{ role: 'user', content: systemInstruction }]
       })
     });
     const data = await res.json();
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '(AI không trả về nội dung — kiểm tra API key/quota)';
+    const text = data?.choices?.[0]?.message?.content || '(AI không trả về nội dung — kiểm tra API key/quota)';
     reviewBox.textContent = `📘 Ôn tập cho ${uid} — bài "${dc}"\n\n${text}`;
   } catch (err) {
     reviewBox.textContent = '❌ Lỗi khi gọi AI: ' + err.message + '\n(Kiểm tra API key hoặc kết nối mạng)';

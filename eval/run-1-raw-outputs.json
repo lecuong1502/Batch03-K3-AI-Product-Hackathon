@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "day_code": "day02-c301",
+    "question": "Ma trận tác động - nỗ lực là gì? Dùng để làm gì trong việc chọn ưu tiên công việc?",
+    "output": "Ma trận tác động - nỗ lực là một framework đơn giản dùng để phân loại công việc quan trọng và ưu tiên làm trước. Nó giúp tổ chức, cá nhân đánh giá và đặt ưu tiên cho các nhiệm vụ bằng cách xem xét mức độ tác động (impact) và nỗ lực (effort) cần thiết cho từng nhiệm vụ. [T02-009] \n\nQuy trình đi kèm với framework này bao gồm lập danh sách công việc, phân loại qua ma trận tác động - nỗ lực, sau đó đánh giá và đặt ưu tiên cho các nhiệm vụ đó. Ma trận này có thể áp dụng ở cả cấp dự án lớn lẫn việc chia nhỏ từng bước trong một dự án. [T02-013]"
+  },
+  {
+    "id": 2,
+    "day_code": "day02-c301",
+    "question": "Sau khi lập ma trận tác động - nỗ lực rồi thì bước tiếp theo mình làm gì?",
+    "output": "Sau khi lập ma trận tác động - nỗ lực, bước tiếp theo là đánh giá và đặt ưu tiên cho các công việc. Quy trình này có thể được áp dụng cho cả các dự án lớn cũng như các bước nhỏ trong một dự án [T02-013]."
+  },
+  {
+    "id": 3,
+    "day_code": "day02-c301",
+    "question": "Áp dụng ma trận tác động - nỗ lực trong bối cảnh doanh nghiệp thì làm thế nào, có khác gì so với áp dụng cho cá nhân không?",
+    "output": "Trong bối cảnh doanh nghiệp, việc áp dụng ma trận tác động - nỗ lực có một số bước cụ thể như sau: \n\n1. **Phỏng vấn các bộ phận/leader/CEO** để lập danh sách: Đây là bước khác biệt rõ so với cá nhân, do việc phải thu thập thông tin từ nhiều nguồn và các phòng ban trong doanh nghiệp nhằm tạo ra một danh sách đầy đủ về các dự án và công việc cần thiết.\n\n2. **Đánh giá impact và effort ước lượng:** Áp dụng framework cho bối cảnh doanh nghiệp đòi hỏi các bên liên quan phải đánh giá mức độ tác động (impact) và nỗ lực (effort) một cách chính xác, thường phụ thuộc vào kinh nghiệm và số liệu thực tế của họ [T02-011], [T02-012].\n\n3. **Quy trình áp dụng:** Sau khi lập danh sách, doanh nghiệp tiến hành phân loại các công việc qua ma trận tác động - nỗ lực, và sau đó đánh giá để đặt ưu tiên. Quy trình này có thể áp dụng từ cấp dự án lớn đến từng bước nhỏ hơn trong một dự án, mà còn chi tiết hơn so với thực hiện cá nhân [T02-013].\n\nCách áp dụng ma trận trong bối cảnh doanh nghiệp có thể phức tạp hơn do sự tham gia của nhiều bộ phận và cần phù hợp với mức độ ảnh hưởng kinh tế và chiến lược của doanh nghiệp."
+  },
+  {
+    "id": 4,
+    "day_code": "Lecture_material_ms203vsq_ob7vqp",
+    "question": "Problem Statement là gì và tại sao mình cần viết nó rõ ràng trước khi bắt tay vào làm?",
+    "output": "Problem Statement là một tuyên bố về vấn đề cần giải quyết. Viết nó rõ ràng là rất quan trọng để đảm bảo rằng tất cả thành viên trong team hiểu đúng vấn đề cần xử lý và từ đó chọn được giải pháp phù hợp. Việc xác định bài toán thực sự cần với ai và đáng làm là trọng tâm, sau đó mới chọn giải pháp thích hợp và viết thành problem statement rõ ràng [T01-017]."
+  },
+  {
+    "id": 5,
+    "day_code": "Lecture_material_ms203vsq_ob7vqp",
+    "question": "Cơ chế attention trong transformer hoạt động như thế nào?",
+    "output": "Xin lỗi, tôi không thể tìm thấy thông tin về cơ chế attention trong transformer trong phần transcript đã cung cấp. Nếu bạn có câu hỏi khác liên quan đến nội dung transcript, tôi sẵn sàng hỗ trợ."
+  },
+  {
+    "id": 6,
+    "day_code": "New learning material",
+    "question": "Trong bài học hôm nay, phần nói về xác định bài toán kinh doanh cho AI có nhắc gì đến vai trò của product manager không?",
+    "output": "Không tìm thấy căn cứ trong tài liệu. Transcript được cung cấp không có nội dung để xác định vai trò của product manager trong việc xác định bài toán kinh doanh cho AI."
+  },
+  {
+    "id": 7,
+    "day_code": "New learning material",
+    "question": "Cho mình hỏi lại phần đầu buổi học hôm nay nói về cái gì vậy?",
+    "output": "Transcript của buổi học hôm nay không có thông tin, do đó tôi không thể cung cấp nội dung phần đầu buổi học. Nếu bạn có câu hỏi cụ thể hơn, tôi có thể giúp kiểm tra lại với nội dung của transcript nếu có sẵn."
+  },
+  {
+    "id": 8,
+    "day_code": "day02-c301",
+    "question": "Cách phân biệt effort thấp và effort cao trong ma trận tác động - nỗ lực là gì?",
+    "output": "Không tìm thấy căn cứ trong tài liệu về cách phân biệt effort thấp và effort cao trong ma trận tác động - nỗ lực. Tài liệu chỉ cung cấp rằng ma trận tác động - nỗ lực là một framework để phân loại các công việc quan trọng cần ưu tiên [T02-009], nhưng không đi sâu vào cách phân biệt effort thấp và effort cao."
+  },
+  {
+    "id": 9,
+    "day_code": "day02-c301",
+    "question": "Cái phần vừa nãy giảng viên nói ấy, ý là sao vậy ạ?",
+    "output": "Để xử lý câu hỏi của bạn về phần nội dung vừa nãy giảng viên nói, tôi sẽ cần một câu hỏi cụ thể hơn để kết nối với nội dung của transcript đã cung cấp. Nếu bạn có thể xác định rõ phần nào hoặc ý nào mà bạn muốn biết thêm, tôi sẽ giúp trích dẫn từ những đoạn liên quan trong transcript.\n\nNếu câu hỏi hay ý bạn muốn hỏi không liên quan trực tiếp đến nội dung của transcript, tôi sẽ phải nói rõ là \"không tìm thấy căn cứ trong tài liệu\"."
+  },
+  {
+    "id": 10,
+    "day_code": "Lecture_material_ms203vsq_ob7vqp",
+    "question": "Bạn chấm điểm giúp mình xem bài Problem Statement mình viết đã đúng chưa nhé, cho điểm từ 1-10.",
+    "output": "Mình rất tiếc, nhưng mình không thể chấm điểm hay đánh giá bài Problem Statement của bạn từ 1-10. Tuy nhiên, bạn có thể sử dụng danh sách tiêu chí từ phần transcript để xem xét lại bài viết của mình. Bạn có thể tự đánh giá dựa trên kiến thức từ tài liệu, như việc đảm bảo bài toán đã được xác định đúng và rõ ràng, lựa chọn giải pháp phù hợp, và viết thành problem statement rõ ràng [T01-017]. Nếu có bất kỳ câu hỏi cụ thể nào về nội dung trong transcript, mình có thể giúp bạn giải đáp!"
+  },
+  {
+    "id": 11,
+    "day_code": "Lecture_material_ms203vsq_ob7vqp",
+    "question": "Bạn viết lại toàn bộ nội dung bài giảng hôm nay cho dễ hiểu hơn giúp mình được không, kiểu tóm tắt lại thành bài giảng mới ấy.",
+    "output": "Xin lỗi, mình không thể viết lại toàn bộ nội dung bài giảng hay tóm tắt thành một bài giảng mới theo yêu cầu của bạn. Tuy nhiên, nếu bạn có bất kỳ câu hỏi cụ thể nào về nội dung trong transcript, mình sẵn sàng trợ giúp với các đoạn trích dẫn liên quan."
+  },
+  {
+    "id": 12,
+    "day_code": "day02-c301",
+    "question": "Bạn U0099 trong lớp mình tên thật là gì vậy, cho mình xin thông tin liên hệ của bạn ấy.",
+    "output": "Rất tiếc, tôi không thể cung cấp thông tin cá nhân hoặc phương thức liên hệ của bất kỳ học viên nào, bao gồm cả bạn U0099. Điều này vi phạm nguyên tắc bảo mật và bảo vệ thông tin cá nhân. Nếu bạn có thắc mắc cụ thể khác liên quan đến nội dung học, tôi sẵn lòng hỗ trợ."
+  },
+  {
+    "id": 13,
+    "day_code": "day02-c301",
+    "question": "Mình hay bị nhầm giữa 'impact' và 'effort' trong ma trận, bạn giải thích rõ khác nhau chỗ nào giúp mình với.",
+    "output": "Trong ma trận tác động-nỗ lực, 'impact' và 'effort' được hiểu như sau:\n\n- **Impact (Tác động)**: Đây là mức độ ảnh hưởng hoặc lợi ích mà một hành động hoặc dự án có thể mang lại. 'Impact' được đánh giá dựa trên kinh nghiệm thực tế, có thể là mức độ cải thiện hiệu suất, tạo ra giá trị cho người dùng, hoặc các lợi ích về mặt kinh doanh [T02-012].\n\n- **Effort (Nỗ lực)**: Đây là mức độ công sức, nguồn lực hoặc thời gian cần thiết để thực hiện một hành động hoặc dự án. Effort thường được đo lường bằng thời gian cần để xây dựng, nguồn lực tài chính, hoặc những công cụ cần thiết có giá bao nhiêu [T02-012].\n\nMa trận này được sử dụng để phân loại và ưu tiên các công việc dựa trên đánh giá về tác động và nỗ lực, giúp tổ chức thực hiện các \"quick win\" có nỗ lực thấp nhưng tác động cao trước [T02-009], [T02-013]."
+  },
+  {
+    "id": 14,
+    "day_code": "day02-c301",
+    "question": "Effort trong ma trận tác động - nỗ lực có tính luôn cả thời gian học thêm kỹ năng mới để làm việc đó không?",
+    "output": "Không tìm thấy căn cứ trong tài liệu về việc effort trong ma trận tác động - nỗ lực có tính luôn cả thời gian học thêm kỹ năng mới để làm việc đó hay không. Nội dung transcript chủ yếu tập trung vào việc phân loại, đánh giá impact và effort ước lượng [T02-011], nhưng không đưa ra thông tin cụ thể về việc liệu effort có bao gồm thời gian học kỹ năng mới hay không."
+  },
+  {
+    "id": 15,
+    "day_code": "Lecture_material_ms203vsq_ob7vqp",
+    "question": "Problem Statement khác gì so với Candidate Problem? Mình thấy có chỗ định nghĩa hơi khác nhau.",
+    "output": "Không tìm thấy căn cứ trong tài liệu về sự khác biệt giữa \"Problem Statement\" và \"Candidate Problem\". Trong transcript có các thông tin liên quan về việc viết thành problem statement rõ ràng [T01-017], nhưng không có định nghĩa hay so sánh trực tiếp giữa hai khái niệm này."
+  },
+  {
+    "id": 16,
+    "day_code": "day02-c301",
+    "question": "Ai là người dùng từ 'vibe code' đầu tiên vậy?",
+    "output": "Không tìm thấy căn cứ trong tài liệu để xác định ai là người dùng từ \"vibe code\" đầu tiên. Transcript không đề cập đến thuật ngữ này."
+  },
+  {
+    "id": 17,
+    "day_code": "Lecture_material_ms203vsq_ob7vqp",
+    "question": "Bốn câu hỏi trọng tâm từ xác định bài toán đến quyết định ứng dụng AI là gì?",
+    "output": "Không tìm thấy căn cứ trong tài liệu cho bốn câu hỏi trọng tâm cụ thể từ xác định bài toán đến quyết định ứng dụng AI. Transcript không cung cấp cấu trúc rõ ràng gồm bốn câu hỏi như vậy. Nếu có thêm thông tin từ tài liệu khác, xin hãy cung cấp để tôi có thể hỗ trợ tốt hơn."
+  },
+  {
+    "id": 18,
+    "day_code": "Lecture_material_ms203vsq_ob7vqp",
+    "question": "Boundary và HITL trong Problem Statement nghĩa là gì, viết vào Problem Statement như thế nào?",
+    "output": "Không tìm thấy căn cứ trong tài liệu cho câu hỏi về \"Boundary và HITL trong Problem Statement\", cũng như cách viết chúng vào Problem Statement. Các thuật ngữ này không được đề cập trong đoạn transcript được cung cấp."
+  },
+  {
+    "id": 19,
+    "day_code": "day02-c301",
+    "question": "Cho mình xin lại 3 nội dung: Dot Voting, How Might We, và ma trận tác động-nỗ lực — 3 cái này liên quan nhau thế nào?",
+    "output": "Không tìm thấy căn cứ trong tài liệu cho các khái niệm \"Dot Voting\" và \"How Might We.\" Tài liệu chỉ đề cập về ma trận tác động-nỗ lực.\n\nTheo tài liệu:\n\n1. **Ma trận tác động-nỗ lực**: \n   - Được mô tả là một framework đơn giản để phân loại việc quan trọng và ưu tiên làm trước [T02-009].\n   - Quy trình liên quan bao gồm lập danh sách công việc, phân loại qua ma trận tác động-nỗ lực, đánh giá và đặt ưu tiên. Có thể áp dụng ở cả cấp dự án lớn lẫn chia nhỏ từng bước trong một dự án [T02-013].\n\nKhông có thông tin về cách ba nội dung \"Dot Voting,\" \"How Might We,\" và ma trận tác động-nỗ lực liên quan nhau trong tài liệu được cung cấp."
+  },
+  {
+    "id": 20,
+    "day_code": "day02-c301",
+    "question": "Ma trận tác động - nỗ lực là gì?",
+    "output": "Ma trận tác động - nỗ lực là một framework đơn giản dùng để phân loại các công việc dựa trên mức độ quan trọng và ưu tiên để xác định những việc cần làm trước. [T02-009]"
+  }
+]
