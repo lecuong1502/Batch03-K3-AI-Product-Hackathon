@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Ôn tập cá nhân hoá — VLearn</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; background:#f6f7f9; margin:0; padding:24px; color:#1a1a1a; }
+  .wrap { max-width: 780px; margin: 0 auto; }
+  h1 { font-size: 20px; margin-bottom: 4px; }
+  .sub { color:#666; font-size:13px; margin-bottom:20px; }
+  .card { background:#fff; border:1px solid #e2e2e2; border-radius:10px; padding:16px; margin-bottom:14px; }
+  label { font-size:13px; font-weight:600; display:block; margin-bottom:6px; }
+  select, button { font-size:14px; padding:8px 12px; border-radius:6px; border:1px solid #ccc; }
+  select { width:100%; margin-bottom:12px; }
+  button { background:#2f6fed; color:#fff; border:none; cursor:pointer; font-weight:600; }
+  button:disabled { background:#aaa; cursor:not-allowed; }
+  button.secondary { background:#fff; color:#2f6fed; border:1px solid #2f6fed; }
+  .turn { border-left:3px solid #ddd; padding:8px 12px; margin-bottom:8px; font-size:13px; background:#fafafa; border-radius:0 6px 6px 0; }
+  .turn.no-cite { border-left-color:#e0554f; background:#fff5f4; }
+  .turn.cited { border-left-color:#2fa85f; }
+  .q { font-weight:600; margin-bottom:4px; }
+  .a { color:#444; }
+  .badge { display:inline-block; font-size:11px; padding:2px 8px; border-radius:10px; margin-left:6px; }
+  .badge.no-cite { background:#fbdedc; color:#a33; }
+  .badge.cited { background:#dcf3e3; color:#2a7a45; }
+  .stats { font-size:13px; color:#555; margin-bottom:10px; }
+  .review-box { background:#eef4ff; border:1px dashed #2f6fed; border-radius:8px; padding:14px; font-size:14px; line-height:1.6; white-space:pre-wrap; }
+  .mock-tag { font-size:11px; background:#fff3cd; color:#856404; padding:2px 8px; border-radius:8px; margin-left:8px; }
+  .hidden { display:none; }
+  .footer-note { font-size:12px; color:#999; margin-top:24px; text-align:center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎓 Ôn tập cá nhân hoá</h1>
+  <div class="sub">Prototype — Mức: <b>Mock</b> (flow bấm được hết, lời gọi AI thật sẽ nối ở CP3)</div>
+
+  <div class="card">
+    <label>Chọn học viên · bài giảng (nhóm đã hỏi lại ≥3 lần)</label>
+    <select id="groupSelect"></select>
+    <div class="stats" id="stats"></div>
+    <button id="genBtn">✨ Sinh bản ôn tập</button>
+    <button class="secondary" id="rawBtn">Xem lịch sử hỏi gốc</button>
+  </div>
+
+  <div class="card hidden" id="rawCard">
+    <label>Lịch sử các lượt hỏi trong bài này</label>
+    <div id="turnList"></div>
+  </div>
+
+  <div class="card hidden" id="reviewCard">
+    <label>Bản ôn tập được sinh <span class="mock-tag">MOCK — chưa gọi AI thật</span></label>
+    <div class="review-box" id="reviewBox"></div>
+  </div>
+
+  <div class="footer-note">
+    Non-goals: không tự chấm điểm học viên · không sửa đè câu trả lời cũ của tutor · không bịa nội dung ngoài transcript.
+  </div>
+</div>
+
+<script>
+let DATA = [];
+
+fetch('demo_data.json').then(r => r.json()).then(data => {
+  DATA = data;
+  const groups = {};
+  data.forEach(r => {
+    const key = r.user_id + '||' + r.day_code;
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(r);
+  });
+  const sel = document.getElementById('groupSelect');
+  Object.keys(groups).forEach(key => {
+    const [uid, dc] = key.split('||');
+    const opt = document.createElement('option');
+    opt.value = key;
+    opt.textContent = `${uid} · ${dc} (${groups[key].length} lượt hỏi)`;
+    sel.appendChild(opt);
+  });
+  window.GROUPS = groups;
+  renderGroup(sel.value);
+});
+
+document.getElementById('groupSelect').addEventListener('change', e => renderGroup(e.target.value));
+document.getElementById('rawBtn').addEventListener('click', () => {
+  document.getElementById('rawCard').classList.toggle('hidden');
+});
+document.getElementById('genBtn').addEventListener('click', () => generateReview(document.getElementById('groupSelect').value));
+
+function renderGroup(key) {
+  const turns = window.GROUPS[key];
+  const noCiteCount = turns.filter(t => t.no_cite).length;
+  document.getElementById('stats').textContent =
+    `${turns.length} lượt hỏi trong bài này · ${noCiteCount} lượt (${Math.round(noCiteCount/turns.length*100)}%) tutor trả lời KHÔNG có trích dẫn`;
+
+  const listEl = document.getElementById('turnList');
+  listEl.innerHTML = '';
+  turns.forEach(t => {
+    const div = document.createElement('div');
+    div.className = 'turn ' + (t.no_cite ? 'no-cite' : 'cited');
+    div.innerHTML = `
+      <div class="q">${escapeHtml(t.question)} <span class="badge ${t.no_cite ? 'no-cite' : 'cited'}">${t.no_cite ? 'không trích dẫn' : 'có trích dẫn ' + t.citations}</span></div>
+      <div class="a">${escapeHtml(t.answer)}</div>
+    `;
+    listEl.appendChild(div);
+  });
+
+  document.getElementById('reviewCard').classList.add('hidden');
+}
+
+function generateReview(key) {
+  const turns = window.GROUPS[key];
+  const [uid, dc] = key.split('||');
+  const noCite = turns.filter(t => t.no_cite);
+
+  // MOCK output — CP3 sẽ thay bằng lời gọi AI thật, đối chiếu transcript sạch để lấy đúng [Txx-NNN]
+  const mockText =
+`📘 Ôn tập cho ${uid} — bài "${dc}"
+
+Bạn đã hỏi lại ${turns.length} lần trong bài này, trong đó ${noCite.length} câu trả lời trước đó KHÔNG có căn cứ rõ ràng từ tài liệu.
+
+Các điểm cần ôn lại có trích dẫn xác thực (mock — sẽ nối transcript thật ở CP3):
+${noCite.slice(0,3).map((t,i) => `${i+1}. ${t.question.split('\\n').pop()} → [cần đối chiếu transcript, ví dụ mã đoạn T0x-0yy]`).join('\\n')}
+
+⚠️ Đây là bản MOCK để kiểm tra flow. Nội dung ôn tập thật sẽ được AI sinh có trích dẫn transcript xác thực ở CP3.`;
+
+  document.getElementById('reviewBox').textContent = mockText;
+  document.getElementById('reviewCard').classList.remove('hidden');
+}
+
+function escapeHtml(s) {
+  return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+</script>
+</body>
+</html>
