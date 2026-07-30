@@ -100,8 +100,8 @@ function renderGroup(key) {
     const div = document.createElement('div');
     div.className = 'turn ' + (t.no_cite ? 'no-cite' : 'cited');
     div.innerHTML = `
-      <div class="q">${escapeHtml(t.question)} <span class="badge ${t.no_cite ? 'no-cite' : 'cited'}">${t.no_cite ? 'không trích dẫn' : 'có trích dẫn ' + t.citations}</span></div>
-      <div class="a">${escapeHtml(t.answer)}</div>
+      <div class="q">${escapeHtml(t.question_excerpt)} <span class="badge ${t.no_cite ? 'no-cite' : 'cited'}">${t.no_cite ? 'không trích dẫn' : 'có trích dẫn ' + t.citations}</span></div>
+      <div class="a">${escapeHtml(t.answer_excerpt)}</div>
     `;
     listEl.appendChild(div);
   });
@@ -109,24 +109,99 @@ function renderGroup(key) {
   document.getElementById('reviewCard').classList.add('hidden');
 }
 
-function generateReview(key) {
+// ⚠️ CP3: cắm API key vào đây (KHÔNG commit key thật lên repo — dùng biến môi trường/prompt nhập tay khi demo)
+const GEMINI_API_KEY = ""; // để trống -> UI sẽ nhắc nhập
+const GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+
+// Mapping day_code -> mã prefix transcript tương ứng (đã xác nhận qua nội dung khớp)
+const DAY_CODE_TO_TRANSCRIPT_PREFIX = {
+  'Lecture_material_ms203vsq_ob7vqp': ['T01', 'T05'], // Problem Statement, xác định bài toán kinh doanh cho AI
+  'day02-c301': ['T02'], // Ma trận Tác động-Nỗ lực, vibe code, quick win
+};
+// CP3 cần load thật từ transcript-0X-clean.md (bổ sung khi có file).
+// Cấu trúc: { "T04-012": "nội dung đoạn...", ... }
+// TRANSCRIPT_CHUNKS: nội dung transcript sạch theo mã đoạn [Txx-NNN], nạp từ transcript_chunks.json
+let TRANSCRIPT_CHUNKS = {};
+
+async function loadTranscriptChunks() {
+  try {
+    const res = await fetch('transcript_chunks.json');
+    TRANSCRIPT_CHUNKS = await res.json();
+  } catch (e) {
+    console.warn('Chưa có transcript_chunks.json — AI sẽ chạy ở chế độ không có nguồn thật (chỉ để test flow).');
+  }
+}
+loadTranscriptChunks();
+
+async function generateReview(key) {
   const turns = window.GROUPS[key];
   const [uid, dc] = key.split('||');
   const noCite = turns.filter(t => t.no_cite);
+  const reviewBox = document.getElementById('reviewBox');
+  const reviewCard = document.getElementById('reviewCard');
+  reviewCard.classList.remove('hidden');
 
-  // MOCK output — CP3 sẽ thay bằng lời gọi AI thật, đối chiếu transcript sạch để lấy đúng [Txx-NNN]
-  const mockText =
-`📘 Ôn tập cho ${uid} — bài "${dc}"
+  // ② Lớp mơ hồ — day_code placeholder, không map được bài giảng
+  if (dc === 'New learning material') {
+    reviewBox.textContent = '⚠️ Chưa xác định được bài giảng cho nhóm này (day_code là placeholder hệ thống). Không thể sinh bản ôn tập có căn cứ — vui lòng chọn nhóm khác.';
+    return;
+  }
 
-Bạn đã hỏi lại ${turns.length} lần trong bài này, trong đó ${noCite.length} câu trả lời trước đó KHÔNG có căn cứ rõ ràng từ tài liệu.
+  // ② Lớp mơ hồ — chưa đủ dữ liệu
+  if (turns.length < 3) {
+    reviewBox.textContent = 'Chưa đủ dữ liệu (cần ≥3 lượt hỏi trong cùng bài giảng) để tổng hợp ôn tập có ý nghĩa cho nhóm này.';
+    return;
+  }
 
-Các điểm cần ôn lại có trích dẫn xác thực (mock — sẽ nối transcript thật ở CP3):
-${noCite.slice(0,3).map((t,i) => `${i+1}. ${t.question.split('\\n').pop()} → [cần đối chiếu transcript, ví dụ mã đoạn T0x-0yy]`).join('\\n')}
+  if (!GEMINI_API_KEY) {
+    const key2 = prompt('Nhập Gemini API key (free tier, không lưu lại, chỉ dùng cho phiên demo này):');
+    if (!key2) {
+      reviewBox.textContent = 'Cần API key để gọi AI thật. Chưa nhập key nên không thể sinh bản ôn tập.';
+      return;
+    }
+    window.__RUNTIME_KEY = key2;
+  }
 
-⚠️ Đây là bản MOCK để kiểm tra flow. Nội dung ôn tập thật sẽ được AI sinh có trích dẫn transcript xác thực ở CP3.`;
+  reviewBox.textContent = '⏳ Đang gọi AI thật, đối chiếu transcript...';
 
-  document.getElementById('reviewBox').textContent = mockText;
-  document.getElementById('reviewCard').classList.remove('hidden');
+  const relevantPrefixes = DAY_CODE_TO_TRANSCRIPT_PREFIX[dc] || [];
+  const contextChunks = Object.entries(TRANSCRIPT_CHUNKS)
+    .filter(([code]) => relevantPrefixes.some(p => code.startsWith(p)))
+    .map(([code, text]) => `[${code}] ${text}`)
+    .join('\n\n');
+
+  const questionsList = noCite.map(t => `- (${t.turn_id}) ${t.question_excerpt}`).join('\n');
+
+  const systemInstruction = `Bạn là trợ lý tổng hợp ôn tập cho học viên. NGUYÊN TẮC BẮT BUỘC:
+1. CHỈ dùng nội dung trong phần TRANSCRIPT được cung cấp bên dưới — không dùng kiến thức ngoài.
+2. Nếu không tìm thấy đoạn transcript support cho một câu hỏi, PHẢI nói rõ "không tìm thấy căn cứ trong tài liệu" cho câu đó — không được bịa.
+3. Mọi thông tin đưa ra phải kèm mã đoạn trích dẫn dạng [Txx-NNN] lấy từ transcript.
+4. KHÔNG chấm điểm, đánh giá năng lực học viên. KHÔNG sửa nội dung transcript gốc, chỉ tóm tắt/trích dẫn.
+5. Nếu TRANSCRIPT rỗng hoặc không đủ, báo rõ giới hạn này thay vì tự sinh nội dung.
+
+TRANSCRIPT:
+${contextChunks || '(không có transcript — báo rõ giới hạn này)'}
+
+CÁC CÂU HỎI HỌC VIÊN ĐÃ HỎI LẠI NHIỀU LẦN (cần ôn tập):
+${questionsList}
+
+Hãy sinh bản ôn tập ngắn gọn, mỗi điểm kèm mã đoạn trích dẫn thật.`;
+
+  try {
+    const apiKey = GEMINI_API_KEY || window.__RUNTIME_KEY;
+    const res = await fetch(`${GEMINI_ENDPOINT}?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: systemInstruction }] }]
+      })
+    });
+    const data = await res.json();
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '(AI không trả về nội dung — kiểm tra API key/quota)';
+    reviewBox.textContent = `📘 Ôn tập cho ${uid} — bài "${dc}"\n\n${text}`;
+  } catch (err) {
+    reviewBox.textContent = '❌ Lỗi khi gọi AI: ' + err.message + '\n(Kiểm tra API key hoặc kết nối mạng)';
+  }
 }
 
 function escapeHtml(s) {
