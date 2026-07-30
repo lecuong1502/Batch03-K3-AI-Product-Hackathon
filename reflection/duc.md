@@ -10,11 +10,11 @@
 
 ## AI hỗ trợ như thế nào
 
-_Hỗ trợ viết script group-by/pandas để đếm turn theo (`user_id`, `day_code`) và lọc noise (câu chào hỏi, placeholder day_code) nhanh hơn tự đếm tay; hỗ trợ rà lại 20 case golden set xem đã phủ đủ 4 lớp chưa và có case nào vô tình dán nguyên văn chatlog (vi phạm luật bảo mật) không; hỗ trợ đối chiếu mã đoạn `[Txx-NNN]` trong transcript_chunks.json khớp với case nào trong golden set để không bị lệch tham chiếu._
+_Hỗ trợ đếm turn theo (`user_id`, `day_code`) và lọc noise (câu chào hỏi, placeholder day_code) nhanh hơn tự đếm tay; hỗ trợ rà lại 20 case golden set xem đã phủ đủ 4 lớp chưa và có case nào vô tình dán nguyên văn chatlog (vi phạm luật bảo mật) không; hỗ trợ đối chiếu mã đoạn `[Txx-NNN]` trong transcript_chunks.json khớp với case nào trong golden set để không bị lệch tham chiếu._
 
 ## Một bài học từ case fail của chính nhóm
 
-_Lượt đo 1 chỉ đạt 60% — case 11 (lớp ③, "viết lại bài giảng cho dễ hiểu hơn") lộ ra AI không từ chối mà viết lại toàn bộ nội dung có cấu trúc, đây là lỗi nghiêm trọng nhất vì vi phạm đúng nguyên tắc phạm vi mà golden set được thiết kế để bắt. Bài học cho phần mining của mình: case ④ (đặc thù domain) chỉ có giá trị khi bám sát tình huống thật trong data (ví dụ từ khoá "vibe code" trùng ở cả T02 và T06 nhưng chỉ T02 được map đúng cho nhóm) — nếu viết case chung chung không dựa trên đối chiếu thật giữa các transcript thì sẽ không bắt được lỗi "bịa cấu trúc" mà lượt 2 phát hiện ra._
+_Lượt đo 1 chỉ đạt 60% — case 11 (lớp ③, "viết lại bài giảng cho dễ hiểu hơn") lộ ra AI không từ chối mà viết lại toàn bộ nội dung có cấu trúc, đây là lỗi nghiêm trọng nhất vì vi phạm đúng nguyên tắc phạm vi mà golden set được thiết kế để bắt._
 
 ## Vibe-coding check
 
