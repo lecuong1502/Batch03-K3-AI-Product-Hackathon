@@ -2,222 +2,118 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ôn tập cá nhân hoá — VLearn</title>
-<style>
-  * { box-sizing: border-box; }
-  body { font-family: -apple-system, Segoe UI, Roboto, sans-serif; background:#f6f7f9; margin:0; padding:24px; color:#1a1a1a; }
-  .wrap { max-width: 780px; margin: 0 auto; }
-  h1 { font-size: 20px; margin-bottom: 4px; }
-  .sub { color:#666; font-size:13px; margin-bottom:20px; }
-  .card { background:#fff; border:1px solid #e2e2e2; border-radius:10px; padding:16px; margin-bottom:14px; }
-  label { font-size:13px; font-weight:600; display:block; margin-bottom:6px; }
-  select, button { font-size:14px; padding:8px 12px; border-radius:6px; border:1px solid #ccc; }
-  select { width:100%; margin-bottom:12px; }
-  button { background:#2f6fed; color:#fff; border:none; cursor:pointer; font-weight:600; }
-  button:disabled { background:#aaa; cursor:not-allowed; }
-  button.secondary { background:#fff; color:#2f6fed; border:1px solid #2f6fed; }
-  .turn { border-left:3px solid #ddd; padding:8px 12px; margin-bottom:8px; font-size:13px; background:#fafafa; border-radius:0 6px 6px 0; }
-  .turn.no-cite { border-left-color:#e0554f; background:#fff5f4; }
-  .turn.cited { border-left-color:#2fa85f; }
-  .q { font-weight:600; margin-bottom:4px; }
-  .a { color:#444; }
-  .badge { display:inline-block; font-size:11px; padding:2px 8px; border-radius:10px; margin-left:6px; }
-  .badge.no-cite { background:#fbdedc; color:#a33; }
-  .badge.cited { background:#dcf3e3; color:#2a7a45; }
-  .stats { font-size:13px; color:#555; margin-bottom:10px; }
-  .review-box { background:#eef4ff; border:1px dashed #2f6fed; border-radius:8px; padding:14px; font-size:14px; line-height:1.6; white-space:pre-wrap; }
-  .mock-tag { font-size:11px; background:#fff3cd; color:#856404; padding:2px 8px; border-radius:8px; margin-left:8px; }
-  .hidden { display:none; }
-  .footer-note { font-size:12px; color:#999; margin-top:24px; text-align:center; }
-</style>
+<link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
-<div class="wrap">
-  <h1>🎓 Ôn tập cá nhân hoá</h1>
-  <div class="sub">Prototype — Mức: <b>Mock</b> (flow bấm được hết, lời gọi AI thật sẽ nối ở CP3)</div>
+<div class="app-shell">
 
-  <div class="card">
-    <label>Chọn học viên · bài giảng (nhóm đã hỏi lại ≥3 lần)</label>
-    <select id="groupSelect"></select>
-    <div class="stats" id="stats"></div>
-    <button id="genBtn">✨ Sinh bản ôn tập</button>
-    <button class="secondary" id="rawBtn">Xem lịch sử hỏi gốc</button>
-  </div>
+  <header class="topbar">
+    <button class="icon-btn" id="menuToggle" aria-label="Menu" title="Danh sách nhóm">☰</button>
+    <div class="brand">🎓 <span>Ôn tập cá nhân hoá</span><span class="tag">VLearn</span></div>
+    <div class="topbar-actions">
+      <span class="mode-pill">Mock+AI · gpt-4o</span>
+      <button class="icon-btn" id="themeToggle" title="Đổi giao diện sáng/tối">🌙</button>
+      <button class="icon-btn" id="settingsBtn" title="Cài đặt">⚙️</button>
+    </div>
+  </header>
 
-  <div class="card hidden" id="rawCard">
-    <label>Lịch sử các lượt hỏi trong bài này</label>
-    <div id="turnList"></div>
-  </div>
+  <div class="layout">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <div class="card hidden" id="reviewCard">
-    <label>Bản ôn tập được sinh <span class="mock-tag">MOCK — chưa gọi AI thật</span></label>
-    <div class="review-box" id="reviewBox"></div>
-  </div>
+    <aside class="sidebar" id="sidebar">
+      <div class="card dash-card" id="dashCard"></div>
 
-  <div class="footer-note">
-    Non-goals: không tự chấm điểm học viên · không sửa đè câu trả lời cũ của tutor · không bịa nội dung ngoài transcript.
+      <div class="sidebar-search">
+        <input type="text" id="groupSearch" placeholder="🔍 Tìm theo mã học viên hoặc bài giảng...">
+        <select id="sortSelect">
+          <option value="nocite_desc">Ưu tiên % không trích dẫn</option>
+          <option value="turns_desc">Số lượt hỏi nhiều nhất</option>
+          <option value="name_asc">Mã học viên A-Z</option>
+        </select>
+      </div>
+
+      <div class="group-list" id="groupList"></div>
+    </aside>
+
+    <main class="main">
+      <div class="group-header" id="groupHeader"></div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="turns">Lịch sử hỏi</button>
+        <button class="tab" data-tab="review">Bản ôn tập</button>
+        <button class="tab" data-tab="history">Đã lưu <span class="count-badge" id="historyCount">0</span></button>
+      </div>
+
+      <section class="tab-panel active" id="panel-turns">
+        <div class="panel-toolbar">
+          <div class="filter-group" id="citeFilter">
+            <button class="chip active" data-filter="all">Tất cả</button>
+            <button class="chip" data-filter="cited">Có trích dẫn</button>
+            <button class="chip" data-filter="no_cite">Không trích dẫn</button>
+          </div>
+          <input type="text" id="turnSearch" placeholder="Tìm trong câu hỏi / câu trả lời...">
+        </div>
+        <div id="turnList"></div>
+      </section>
+
+      <section class="tab-panel" id="panel-review">
+        <div class="review-toolbar">
+          <button id="genBtn">✨ Sinh bản ôn tập</button>
+          <button class="secondary" id="copyBtn" disabled>📋 Copy</button>
+          <button class="secondary" id="downloadBtn" disabled>⬇️ Tải .md</button>
+        </div>
+        <label style="font-size:13px;font-weight:600;display:block;margin-bottom:8px;">
+          Bản ôn tập được sinh <span class="mock-tag">gọi AI thật qua OpenRouter</span>
+        </label>
+        <div class="review-box empty" id="reviewBox">Bấm "Sinh bản ôn tập" để bắt đầu.</div>
+      </section>
+
+      <section class="tab-panel" id="panel-history">
+        <label style="font-size:13px;font-weight:600;display:block;margin-bottom:8px;">
+          Các bản ôn tập đã sinh trước đó cho nhóm này (lưu trong trình duyệt — localStorage)
+        </label>
+        <div id="historyList"></div>
+      </section>
+
+      <div class="footer-note">
+        Non-goals: không tự chấm điểm học viên · không sửa đè câu trả lời cũ của tutor · không bịa nội dung ngoài transcript.
+      </div>
+    </main>
   </div>
 </div>
 
+<!-- Settings modal -->
+<div class="modal-overlay hidden" id="settingsModal">
+  <div class="modal">
+    <h3>⚙️ Cài đặt</h3>
+    <label>OpenRouter API Key</label>
+    <input type="password" id="apiKeyInput" placeholder="sk-or-v1-...">
+    <div class="checkbox-row">
+      <input type="checkbox" id="rememberKey">
+      <label for="rememberKey" style="margin:0;">Ghi nhớ key trong trình duyệt này (localStorage)</label>
+    </div>
+    <div class="hint">Nếu không tick, key chỉ dùng cho phiên hiện tại và không được lưu lại.</div>
+
+    <label>Model</label>
+    <select id="modelSelect">
+      <option value="openai/gpt-4o">openai/gpt-4o (mặc định)</option>
+      <option value="openai/gpt-4o-mini">openai/gpt-4o-mini (nhanh &amp; rẻ hơn)</option>
+      <option value="anthropic/claude-3.5-sonnet">anthropic/claude-3.5-sonnet</option>
+    </select>
+
+    <div class="modal-actions">
+      <button class="secondary" id="closeSettings">Đóng</button>
+      <button id="saveSettings">Lưu</button>
+    </div>
+  </div>
+</div>
+
+<div class="citation-popover hidden" id="citationPopover"></div>
+<div class="toast-stack" id="toastStack"></div>
+
 <script src="config.js"></script>
-<script>
-let DATA = [];
-
-fetch('demo_data.json').then(r => r.json()).then(data => {
-  DATA = data;
-  const groups = {};
-  data.forEach(r => {
-    const key = r.user_id + '||' + r.day_code;
-    if (!groups[key]) groups[key] = [];
-    groups[key].push(r);
-  });
-  const sel = document.getElementById('groupSelect');
-  Object.keys(groups).forEach(key => {
-    const [uid, dc] = key.split('||');
-    const opt = document.createElement('option');
-    opt.value = key;
-    opt.textContent = `${uid} · ${dc} (${groups[key].length} lượt hỏi)`;
-    sel.appendChild(opt);
-  });
-  window.GROUPS = groups;
-  renderGroup(sel.value);
-});
-
-document.getElementById('groupSelect').addEventListener('change', e => renderGroup(e.target.value));
-document.getElementById('rawBtn').addEventListener('click', () => {
-  document.getElementById('rawCard').classList.toggle('hidden');
-});
-document.getElementById('genBtn').addEventListener('click', () => generateReview(document.getElementById('groupSelect').value));
-
-function renderGroup(key) {
-  const turns = window.GROUPS[key];
-  const noCiteCount = turns.filter(t => t.no_cite).length;
-  document.getElementById('stats').textContent =
-    `${turns.length} lượt hỏi trong bài này · ${noCiteCount} lượt (${Math.round(noCiteCount/turns.length*100)}%) tutor trả lời KHÔNG có trích dẫn`;
-
-  const listEl = document.getElementById('turnList');
-  listEl.innerHTML = '';
-  turns.forEach(t => {
-    const div = document.createElement('div');
-    div.className = 'turn ' + (t.no_cite ? 'no-cite' : 'cited');
-    div.innerHTML = `
-      <div class="q">${escapeHtml(t.question_excerpt)} <span class="badge ${t.no_cite ? 'no-cite' : 'cited'}">${t.no_cite ? 'không trích dẫn' : 'có trích dẫn ' + t.citations}</span></div>
-      <div class="a">${escapeHtml(t.answer_excerpt)}</div>
-    `;
-    listEl.appendChild(div);
-  });
-
-  document.getElementById('reviewCard').classList.add('hidden');
-}
-
-// Key được nạp từ config.js (sinh ra bởi generate_config.py đọc .env) — KHÔNG hardcode ở đây
-const OPENROUTER_API_KEY = window.OPENROUTER_API_KEY || "";
-const OPENROUTER_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions";
-const OPENROUTER_MODEL = "openai/gpt-4o";
-
-// Mapping day_code -> mã prefix transcript tương ứng (đã xác nhận qua nội dung khớp)
-const DAY_CODE_TO_TRANSCRIPT_PREFIX = {
-  'Lecture_material_ms203vsq_ob7vqp': ['T01', 'T05'], // Problem Statement, xác định bài toán kinh doanh cho AI
-  'day02-c301': ['T02'], // Ma trận Tác động-Nỗ lực, vibe code, quick win
-};
-// CP3 cần load thật từ transcript-0X-clean.md (bổ sung khi có file).
-// Cấu trúc: { "T04-012": "nội dung đoạn...", ... }
-// TRANSCRIPT_CHUNKS: nội dung transcript sạch theo mã đoạn [Txx-NNN], nạp từ transcript_chunks.json
-let TRANSCRIPT_CHUNKS = {};
-
-async function loadTranscriptChunks() {
-  try {
-    const res = await fetch('transcript_chunks.json');
-    TRANSCRIPT_CHUNKS = await res.json();
-  } catch (e) {
-    console.warn('Chưa có transcript_chunks.json — AI sẽ chạy ở chế độ không có nguồn thật (chỉ để test flow).');
-  }
-}
-loadTranscriptChunks();
-
-async function generateReview(key) {
-  const turns = window.GROUPS[key];
-  const [uid, dc] = key.split('||');
-  const noCite = turns.filter(t => t.no_cite);
-  const reviewBox = document.getElementById('reviewBox');
-  const reviewCard = document.getElementById('reviewCard');
-  reviewCard.classList.remove('hidden');
-
-  // ② Lớp mơ hồ — day_code placeholder, không map được bài giảng
-  if (dc === 'New learning material') {
-    reviewBox.textContent = '⚠️ Chưa xác định được bài giảng cho nhóm này (day_code là placeholder hệ thống). Không thể sinh bản ôn tập có căn cứ — vui lòng chọn nhóm khác.';
-    return;
-  }
-
-  // ② Lớp mơ hồ — chưa đủ dữ liệu
-  if (turns.length < 3) {
-    reviewBox.textContent = 'Chưa đủ dữ liệu (cần ≥3 lượt hỏi trong cùng bài giảng) để tổng hợp ôn tập có ý nghĩa cho nhóm này.';
-    return;
-  }
-
-  if (!OPENROUTER_API_KEY) {
-    const key2 = prompt('Nhập OpenRouter API key (không lưu lại, chỉ dùng cho phiên demo này):');
-    if (!key2) {
-      reviewBox.textContent = 'Cần API key để gọi AI thật. Chưa nhập key nên không thể sinh bản ôn tập.';
-      return;
-    }
-    window.__RUNTIME_KEY = key2;
-  }
-
-  reviewBox.textContent = '⏳ Đang gọi AI thật (gpt-4o qua OpenRouter), đối chiếu transcript...';
-
-  const relevantPrefixes = DAY_CODE_TO_TRANSCRIPT_PREFIX[dc] || [];
-  const contextChunks = Object.entries(TRANSCRIPT_CHUNKS)
-    .filter(([code]) => relevantPrefixes.some(p => code.startsWith(p)))
-    .map(([code, text]) => `[${code}] ${text}`)
-    .join('\n\n');
-
-  const questionsList = noCite.map(t => `- (${t.turn_id}) ${t.question_excerpt}`).join('\n');
-
-  const systemInstruction = `Bạn là trợ lý tổng hợp ôn tập cho học viên. NGUYÊN TẮC BẮT BUỘC:
-1. CHỈ dùng nội dung trong phần TRANSCRIPT được cung cấp bên dưới — không dùng kiến thức ngoài.
-2. Nếu không tìm thấy đoạn transcript support cho một câu hỏi, PHẢI nói rõ "không tìm thấy căn cứ trong tài liệu" cho câu đó — không được bịa.
-3. Mọi thông tin đưa ra phải kèm mã đoạn trích dẫn dạng [Txx-NNN] lấy từ transcript.
-4. KHÔNG chấm điểm, đánh giá năng lực học viên dưới bất kỳ hình thức nào (kể cả cho điểm số, nhận xét đúng/sai bài làm).
-5. KHÔNG được viết lại, tóm tắt lại, hay tái cấu trúc toàn bộ nội dung bài giảng thành một phiên bản mới thay thế — kể cả khi học viên yêu cầu trực tiếp "viết lại cho dễ hiểu hơn". Nếu học viên yêu cầu việc này, PHẢI từ chối và giải thích: chỉ có thể trả lời câu hỏi cụ thể có trích dẫn, không tạo bản thay thế cho bài giảng gốc.
-6. KHÔNG cung cấp thông tin cá nhân/liên hệ của học viên khác.
-7. Nếu TRANSCRIPT rỗng hoặc không đủ, báo rõ giới hạn này thay vì tự sinh nội dung.
-8. Khi trình bày dưới dạng danh sách/định nghĩa có cấu trúc rõ ràng (ví dụ đánh số "4 câu hỏi trọng tâm", định nghĩa chính thức của một thuật ngữ), CHỈ dùng cấu trúc đó nếu transcript có sẵn cấu trúc tương tự. Nếu bạn đang tự tổng hợp/diễn giải từ nhiều câu rời rạc thành một cấu trúc mới, PHẢI ghi rõ "(tổng hợp/diễn giải, không phải nguyên văn)" ngay sau phần đó.
-
-TRANSCRIPT:
-${contextChunks || '(không có transcript — báo rõ giới hạn này)'}
-
-CÁC CÂU HỎI HỌC VIÊN ĐÃ HỎI LẠI NHIỀU LẦN (cần ôn tập):
-${questionsList}
-
-Hãy sinh bản ôn tập ngắn gọn, mỗi điểm kèm mã đoạn trích dẫn thật.`;
-
-  try {
-    const apiKey = OPENROUTER_API_KEY || window.__RUNTIME_KEY;
-    const res = await fetch(OPENROUTER_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        'HTTP-Referer': window.location.href,
-        'X-Title': 'VLearn On tap ca nhan hoa'
-      },
-      body: JSON.stringify({
-        model: OPENROUTER_MODEL,
-        messages: [{ role: 'user', content: systemInstruction }]
-      })
-    });
-    const data = await res.json();
-    const text = data?.choices?.[0]?.message?.content || '(AI không trả về nội dung — kiểm tra API key/quota)';
-    reviewBox.textContent = `📘 Ôn tập cho ${uid} — bài "${dc}"\n\n${text}`;
-  } catch (err) {
-    reviewBox.textContent = '❌ Lỗi khi gọi AI: ' + err.message + '\n(Kiểm tra API key hoặc kết nối mạng)';
-  }
-}
-
-function escapeHtml(s) {
-  return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-</script>
+<script src="assets/app.js"></script>
 </body>
 </html>
