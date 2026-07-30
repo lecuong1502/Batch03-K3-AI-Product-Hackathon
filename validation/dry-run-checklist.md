@@ -19,7 +19,7 @@
 | 3 | Giải pháp & demo live — lát cắt 1 câu + demo 1 case chuẩn + 1 case chỗ khó | 2' | Cường |
 | 4 | Kết quả đo — % golden set (100%, 19/19) đối chiếu quality bar (≥80%) + failure đáng kể nhất đã tìm thấy (case "bịa cấu trúc") | 45s | Trí |
 | 5 | User thật nói gì — ≥2 quote nguyên văn từ validation | 45s | Độ |
-| 6 | Nếu có thêm 1 tuần — backlog từ feedback/failure chưa xử | 30s | Đức |
+| 6 | Nếu có thêm 1 tuần — backlog từ feedback/failure chưa xử  lý | 30s | Đức |
 
 - [x] Case chỗ khó chọn để demo live: hỏi một nội dung không có trong transcript; kỳ vọng AI nói rõ "không tìm thấy căn cứ trong tài liệu" thay vì bịa.
 - [x] Đã bấm giờ thử toàn bộ 1 lượt, tổng ≤5 phút

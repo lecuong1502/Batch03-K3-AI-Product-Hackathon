@@ -133,7 +133,7 @@ Chi tiết từng lượt: `eval/run-1-results.md`, `eval/run-2-results.md`, `ev
 - **Kế hoạch vòng validation CP5:** 
     + Người dẫn phiên validation (giao task, quan sát, hỏi 3 câu): Cường
     + Người ghi log nguyên văn: Trí
-    + Người chạy dry run + bấm giờ demo: Đức
+    + Người chạy dry run + bấm giờ demo: Độ
 
 - **Multi-prototype:** Chưa làm — nếu kịp thời gian trước CP5, có thể thử 2 phương án khác trục: (a) AI tự động sinh ôn tập ngay khi mở bài vs (b) học viên bấm nút mới sinh — khác biệt ở mức độ chủ động của AI.
 
