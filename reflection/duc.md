@@ -6,7 +6,6 @@
 
 - CP1: Mining `chat_history_anonymized_for_hackathon.csv` để tìm bằng chứng cho pain point — group theo (`user_id`, `day_code`), loại `day_code = "New learning material"` (placeholder không map được transcript) và loại turn chỉ là câu chào hỏi, lọc nhóm có ≥3 turn. Ra số: 96 nhóm (user × bài giảng) / 73 học viên (trên 369 user) / 476 turn / **196 turn (41.2%) không có `citations`**, kèm ≥5 ví dụ nguyên văn theo mã `turn_id` (T0905, T0092, T0702...) — đây là căn cứ để nhóm chọn hướng "ôn tập cá nhân hoá ưu tiên turn thiếu citation" thay vì 2 hướng còn lại.
 - CP3: Chunk 6 transcript bài giảng đã làm sạch thành `codebase/transcript_chunks.json` — mỗi đoạn gán mã `[Txx-NNN]` để làm nguồn trích dẫn cho AI, tránh tình trạng "trích mà không biết trích vào đâu".
-- CP3: Xây `eval/golden_set.md` — 20 case phủ 4 lớp chỗ khó (①②③④), trong đó ≥10 case mining từ chatlog thật (map đúng 2 `day_code` đã có transcript), phần còn lại tự dựng để phủ lớp ③ (ngoài phạm vi) do data thật chưa có ví dụ tương ứng. Giữ đúng luật bảo mật: chỉ ghi mã `turn_id`, không dán nguyên văn dài vào file (tra ngược lại CSV khi cần).
 
 ## AI hỗ trợ như thế nào
 
