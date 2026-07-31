@@ -1,6 +1,6 @@
 # Reflection — [Nguyễn Công Trí] — [2A202601715]
  
-**Vai trò trong nhóm:** _Evidence & mining_
+**Vai trò trong nhóm:** _Prompt_Goldenset_
  
 ## Phần mình đã làm
  
