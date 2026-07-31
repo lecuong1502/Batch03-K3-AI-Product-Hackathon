@@ -58,3 +58,4 @@ git push
 2. **Golden set ≥20 case** — bắt đầu từ 12 turn_id thật đã lọc (T0905, T0092, T0702, T0569, T1116, T0650, T1035, T0884, T0776, T0229, T1022, T0802) + bổ sung case cho 4 kịch bản ③④ (hiện chưa có case thật)
 3. **Bảng kết quả lượt chạy đầu tiên** — chạy golden set qua AI thật, ghi % đạt, lưu vào `eval/`
 
+
